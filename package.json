@@ -1,0 +1,35 @@
+{
+	"name": "Catr",
+	"version": "0.0.1",
+	"description": "Cats",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js"
+	},
+	"dependencies": {
+		"express": "*",
+		"http": "*",
+		"ws": "*",
+		"cookie-parser": "*",
+		"express-session": "*",
+		"jade": "*",
+		"nodeunit": "*",
+		"jsdoc": "*"
+	},
+	"engines": {
+		"node": "*",
+		"npm": "*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/lgenasi/Catr.git"
+	},
+	"keywords": [
+		"node",
+		"heroku",
+		"express"
+	],
+	"debug": false,
+	"route": "/",
+	"port": "5000"
+}
