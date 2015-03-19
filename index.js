@@ -9,7 +9,7 @@ var WebSocketServer = require('ws').Server;
 
 var app = express();
 app.use("/src", express.static(__dirname + '/src'));
-app.use("/lib", express.static(__dirname + '/lib'));
+app.use("/lib", express.static(__dirname + '/bower_components'));
 var server = http.createServer(app);
 
 var clients = [];
@@ -29,8 +29,10 @@ wss.on('connection', function(ws) {
 
   ws.on('message', function(data) {
     console.log(data);
-    wss.broadcast("sending data");
-  });
+    var packet = JSON.parse(data);
+    packet.clientId = ws._socket.remoteAddress;
+    ws.send( (Math.floor(Math.random() * (10000 - 1000)) + 1000) + "");
+  }); 
 
   ws.on('close', function close() {
     console.log("Connection closed.", {sessionId: ws.session.id});

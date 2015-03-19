@@ -1,0 +1,30 @@
+{
+  "name": "Catr",
+  "main": "index.js",
+  "version": "0.0.1",
+  "homepage": "https://github.com/we-r-llamas/Catr",
+  "authors": [
+    "HopefulLlama <jonlaw10170@gmail.com>",
+    "lGenasi <l.genasi@gmail.com>"
+  ],
+  "description": "Cats!",
+  "moduleType": [
+    "node"
+  ],
+  "keywords": [
+    "cats",
+    "catr"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4"
+  }
+}
