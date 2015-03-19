@@ -29,8 +29,10 @@ wss.on('connection', function(ws) {
 
   ws.on('message', function(data) {
     console.log(data);
-    wss.broadcast("sending data");
-  });
+    var packet = JSON.parse(data);
+    packet.clientId = ws._socket.remoteAddress;
+    ws.send( (Math.floor(Math.random() * (10000 - 1000)) + 1000) + "");
+  }); 
 
   ws.on('close', function close() {
     console.log("Connection closed.", {sessionId: ws.session.id});

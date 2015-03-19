@@ -11,8 +11,11 @@ var webSocketHandler = {
     };
 
     webSocket.onmessage = function(e) {
-      console.log("received a message");      
+      console.log("Received a problem");      
       console.log(e.data);
+      var problem = parseInt(e.data);
+      var solution = solveProblem(problem);
+      webSocket.sendPacket(problem, solution);
     };
     
     webSocket.onclose = function(e) {
@@ -20,6 +23,11 @@ var webSocketHandler = {
           // Connection has closed so try to reconnect every 10 seconds.
           createWebSocket(); 
       }, 10*1000);
+    };
+
+    webSocket.sendPacket = function(problem, solution) {
+      console.log("Sending answer: ", problem, solution);
+      webSocket.send(JSON.stringify({problem: problem, solution: solution}));
     };
   return webSocket;
   }
