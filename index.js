@@ -9,7 +9,7 @@ var WebSocketServer = require('ws').Server;
 
 var app = express();
 app.use("/src", express.static(__dirname + '/src'));
-app.use("/lib", express.static(__dirname + '/lib'));
+app.use("/lib", express.static(__dirname + '/bower_components'));
 var server = http.createServer(app);
 
 var clients = [];
