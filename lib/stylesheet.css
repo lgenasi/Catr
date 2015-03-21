@@ -1,0 +1,12 @@
+.carouselImg img {
+	width: 460px;
+	height: 345px;
+	max-height: 345px;
+}
+
+.carousel-inner > .item > img,
+
+.carousel-inner > .item > a > img {
+	width: 70%;
+	margin: auto;
+}
