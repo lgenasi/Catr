@@ -1,6 +1,8 @@
 $(window).ready(function() {
-  var allowingAbuse = confirm("Hi! Welcome to Catr!\n\nWe'd like to run some background processes, which helps us to improve your experience of Catr.\n\nPlease press OK to allow us to do so.");
-  if(allowingAbuse) {
+  $('#abuseDialog').modal('show');
+  var allowAbuseBtn = document.getElementById("allowAbuseBtn");
+  allowAbuseBtn.onclick = function(){
+    $('#abuseDialog').modal('hide');
     var webSocket = webSocketHandler.createWebSocket();
   	
   
