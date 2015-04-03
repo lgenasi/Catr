@@ -46,21 +46,32 @@ wss.on('connection', function(ws) {
   ws.on('message', function(data) {
     ws.session.state = "solved";
     console.log("Got data: " + data + " from client at " + ws.session.id);
-    var packet = JSON.parse(data); 
-    console.log("Moving document " + data._id + "from processing to processed");
-    processingCollection.findOne({ _id: data._id}, function(err,doc){
-      processingCollection.remove(doc, function(err){
+    
+    if(data !== "null") {
+      var packet = JSON.parse(data); 
+      
+      console.log("Moving document " + packet + " from processing to processed");
+    
+      processingCollection.findById(packet._id, function(err, doc) {
         if (err) {
           throw err;
         } else {
-          processedCollection.insert(doc, function(insertErr, insertDoc){
-            if (insertErr) {
-              throw insertErr;
+          processingCollection.remove(doc, function(removeErr){
+            if (removeErr) {
+              throw removeErr;
+            } else {
+              processedCollection.insert(packet, function(insertErr, insertDoc){
+                if (insertErr) {
+                  throw insertErr;
+                }
+              });
             }
           });
         }
-      });
-    });   
+      });         
+    } else {
+      console.log("Data is null. Ignoring.");
+    }
 
     console.log("Counting problems");
     unprocessedCollection.find({}, function(err, docs){

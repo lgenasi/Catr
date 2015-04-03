@@ -11,8 +11,8 @@ $(window).ready(function() {
     
     var sendingId = setInterval(function () {
     	if(webSocket.readyState == 1) {
-    		console.log("sending initial packet");
-    		webSocket.sendPacket(null, null);
+    		console.log("Sending initial packet.");
+    		webSocket.send("null");
     		clearInterval(sendingId);
     	}
     }, 1000);
