@@ -13,9 +13,9 @@ var webSocketHandler = {
     webSocket.onmessage = function(e) {
       console.log("Received a problem");      
       console.log(e.data);
-      var problem = parseInt(e.data);
-      var solution = solveProblem(problem);
-      webSocket.sendPacket(problem, solution);
+      var packet = JSON.parse(e.data);
+      packet.solution = solveProblem(packet.problem);
+      webSocket.sendPacket(packet);
     };
     
     webSocket.onclose = function(e) {
@@ -25,9 +25,9 @@ var webSocketHandler = {
       }, 10*1000);
     };
 
-    webSocket.sendPacket = function(problem, solution) {
-      console.log("Sending answer: ", problem, solution);
-      webSocket.send(JSON.stringify({problem: problem, solution: solution}));
+    webSocket.sendPacket = function(packet) {
+      console.log("Sending answer: ", packet);
+      webSocket.send(JSON.stringify(packet));
     };
   return webSocket;
   }
