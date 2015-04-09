@@ -41,7 +41,36 @@ wss.on('connection', function(ws) {
   ws.session = {};
   ws.session.state = "new";
   ws.session.id = ws._socket.remoteAddress;
+  ws.session.problem = null;
   console.log("New client.", {sessionId: ws.session.id});
+
+  ws.restoreExistingProblem = function() {
+    if(ws.session.problem != null) {
+      console.log({sessionId: ws.session.id}, " has a unprocessed problem");
+
+      processingCollection.findById(ws.session.problem._id, function(err, doc) {
+        if (err) {
+          console.log(err);
+        } else {
+
+          processingCollection.remove(doc, function(removeErr) {
+            if(removeErr) {
+              console.log(removeErr);
+            } else {
+              console.log({sessionId: ws.session.id}, " has removed its unprocessed problem");
+              unprocessedCollection.insert(doc, function(insertErr, insertDoc) {
+                if(insertErr) {
+                  console.log(insertErr);
+                } else {
+                  console.log({sessionId: ws.session.id}, " has sucessfully restored its problem");
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  };
 
   ws.on('message', function(data) {
     ws.session.state = "solved";
@@ -50,19 +79,19 @@ wss.on('connection', function(ws) {
     if(data !== "null") {
       var packet = JSON.parse(data); 
       
-      console.log("Moving document " + packet + " from processing to processed");
+      console.log("Moving document " + packet._id + " from processing to processed");
     
       processingCollection.findById(packet._id, function(err, doc) {
         if (err) {
-          throw err;
+          console.log(err);
         } else {
           processingCollection.remove(doc, function(removeErr){
             if (removeErr) {
-              throw removeErr;
+              console.log(removeErr);
             } else {
               processedCollection.insert(packet, function(insertErr, insertDoc){
                 if (insertErr) {
-                  throw insertErr;
+                  console.log(insertErr);
                 }
               });
             }
@@ -76,7 +105,7 @@ wss.on('connection', function(ws) {
     console.log("Counting problems");
     unprocessedCollection.find({}, function(err, docs){
       if(err) {
-        throw err;
+        console.log(err);
       } else {
         if (docs.length < 50) {
           console.log("Only " +docs.length+ " unsolved problems remaining. Generating new problems.")
@@ -88,9 +117,9 @@ wss.on('connection', function(ws) {
 
           unprocessedCollection.insert(problems, function(err, doc) {
             if (err) {
-              throw err;
+              console.log(err);
             } else {
-              console.log("Success inserting new problems.")
+              console.log("Success inserting new problems.");
             }
           });
         }
@@ -100,19 +129,20 @@ wss.on('connection', function(ws) {
           ws.session.state = "processing";
           unprocessedCollection.remove(doc, function(removeErr){
             if (removeErr) {
-              throw removeErr;
+              console.log(removeErr);
             } else {
               processingCollection.insert(doc, function(insertErr, insertDoc){
                 if (insertErr) {
-                  throw insertErr;
+                  console.log(insertErr);
                 }
               });
             }
           });
 
-          
+          ws.session.problem = doc;
           ws.send(JSON.stringify(doc), function ack(error) {
             console.log("Warning in sending problem: ", error);
+            ws.restoreExistingProblem();
           });
         });
 
@@ -124,7 +154,9 @@ wss.on('connection', function(ws) {
     console.log("Connection closed.", {sessionId: ws.session.id});
     clients.splice(clients.indexOf(ws), 1);
     console.log({connections: clients.length});
+    ws.restoreExistingProblem();    
   });
+
   clients.push(ws);
   console.log({connections: clients.length});
 });
