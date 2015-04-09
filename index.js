@@ -110,7 +110,10 @@ wss.on('connection', function(ws) {
             }
           });
 
-          ws.send(JSON.stringify(doc));
+          
+          ws.send(JSON.stringify(doc), function ack(error) {
+            console.log("Warning in sending problem: ", error);
+          });
         });
 
       }
